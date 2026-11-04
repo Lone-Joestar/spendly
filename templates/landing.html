@@ -19,44 +19,53 @@
         <div class="hero-actions">
             <a href="{{ url_for('register') }}" class="btn-primary">Start tracking free</a>
             <a href="{{ url_for('login') }}" class="btn-ghost">Sign in</a>
+            <button type="button" class="btn-ghost btn-play" id="open-video"
+                    data-video="https://www.youtube-nocookie.com/embed/aqz-KE-bpKQ">▶ See how it works</button>
         </div>
     </div>
     <div class="hero-visual">
-        <div class="mock-card">
-            <div class="mock-card-header">
-                <span class="mock-label">March 2026</span>
-                <span class="mock-total">₹12,450</span>
-            </div>
-            <div class="mock-bars">
-                <div class="mock-bar-row">
-                    <span class="mock-cat">Bills</span>
-                    <div class="mock-bar-track">
-                        <div class="mock-bar" style="width: 72%"></div>
+        <div class="phone-stage">
+
+            <div class="phone phone-back">
+                <div class="phone-label">Monthly budget</div>
+                <div class="ring" style="--pct: 83">
+                    <div class="ring-inner">
+                        <span class="ring-amt">₹12,450</span>
+                        <span class="ring-sub">of ₹15,000</span>
                     </div>
-                    <span class="mock-amt">₹4,500</span>
                 </div>
-                <div class="mock-bar-row">
-                    <span class="mock-cat">Food</span>
-                    <div class="mock-bar-track">
-                        <div class="mock-bar mock-bar-2" style="width: 52%"></div>
+                <div class="flow-row">
+                    <div class="flow flow-in">
+                        <span class="flow-arrow">↑</span>
+                        <div><small>Money in</small><strong>₹32,000</strong></div>
                     </div>
-                    <span class="mock-amt">₹3,200</span>
-                </div>
-                <div class="mock-bar-row">
-                    <span class="mock-cat">Health</span>
-                    <div class="mock-bar-track">
-                        <div class="mock-bar mock-bar-3" style="width: 33%"></div>
+                    <div class="flow flow-out">
+                        <span class="flow-arrow">↓</span>
+                        <div><small>Money out</small><strong>₹12,450</strong></div>
                     </div>
-                    <span class="mock-amt">₹2,050</span>
-                </div>
-                <div class="mock-bar-row">
-                    <span class="mock-cat">Transport</span>
-                    <div class="mock-bar-track">
-                        <div class="mock-bar mock-bar-4" style="width: 28%"></div>
-                    </div>
-                    <span class="mock-amt">₹1,800</span>
                 </div>
             </div>
+
+            <div class="phone phone-front">
+                <div class="seg">
+                    <span>Week</span><span class="seg-active">Month</span><span>Quarter</span>
+                </div>
+                <div class="bars">
+                    <div class="bar-group"><div class="bar-pair"><i style="--h: 62%"></i><i style="--h: 38%"></i></div><span>Oct</span></div>
+                    <div class="bar-group"><div class="bar-pair"><i style="--h: 70%"></i><i style="--h: 52%"></i></div><span>Nov</span></div>
+                    <div class="bar-group"><div class="bar-pair"><i style="--h: 55%"></i><i style="--h: 44%"></i></div><span>Dec</span></div>
+                    <div class="bar-group"><div class="bar-pair"><i style="--h: 66%"></i><i style="--h: 30%"></i></div><span>Jan</span></div>
+                    <div class="bar-group"><div class="bar-pair"><i style="--h: 58%"></i><i style="--h: 48%"></i></div><span>Feb</span></div>
+                    <div class="bar-group active"><div class="bar-pair"><i style="--h: 92%"></i><i style="--h: 60%"></i></div><span>Mar</span></div>
+                </div>
+                <div class="phone-label">Top spends · March</div>
+                <div class="chips">
+                    <div class="chip"><span class="chip-dot"></span><strong>₹4,500</strong><small>Bills</small></div>
+                    <div class="chip"><span class="chip-dot chip-dot-2"></span><strong>₹3,200</strong><small>Food</small></div>
+                    <div class="chip"><span class="chip-dot chip-dot-3"></span><strong>₹2,050</strong><small>Health</small></div>
+                </div>
+            </div>
+
         </div>
     </div>
 </section>
@@ -89,4 +98,48 @@
     </div>
 </section>
 
+<div class="modal" id="video-modal">
+    <div class="modal-dialog" role="dialog" aria-modal="true" aria-label="How Spendly works">
+        <button type="button" class="modal-close" id="close-video" aria-label="Close video">×</button>
+        <div class="modal-video">
+            <iframe id="video-frame" title="How Spendly works"
+                    allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+(function () {
+    var openBtn = document.getElementById('open-video');
+    var modal = document.getElementById('video-modal');
+    var frame = document.getElementById('video-frame');
+    var closeBtn = document.getElementById('close-video');
+
+    function openModal() {
+        frame.src = openBtn.dataset.video + '?autoplay=1&rel=0';
+        modal.classList.add('is-open');
+        document.body.style.overflow = 'hidden';
+        closeBtn.focus();
+    }
+
+    function closeModal() {
+        modal.classList.remove('is-open');
+        frame.src = 'about:blank';   // unloads the video, so it stops playing
+        document.body.style.overflow = '';
+        openBtn.focus();
+    }
+
+    openBtn.addEventListener('click', openModal);
+    closeBtn.addEventListener('click', closeModal);
+    modal.addEventListener('click', function (e) {
+        if (e.target === modal) closeModal();   // click on the dark backdrop
+    });
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && modal.classList.contains('is-open')) closeModal();
+    });
+})();
+</script>
 {% endblock %}
